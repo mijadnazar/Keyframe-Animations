@@ -79,6 +79,9 @@ class ViewController: UIViewController {
     summary.text = data.summary
 
     if animated {
+
+        self.planeDepart()
+
       fade(imageView: bgImageView,
            toImage: UIImage(named: data.weatherImageName)!,
            showEffects: data.showWeatherEffects)
@@ -95,6 +98,7 @@ class ViewController: UIViewController {
       moveLabel(label: arrivingTo, text: data.arrivingTo, offset: offsetArriving)
 
       cubeTransition(label: flightStatus, text: data.flightStatus,  direction: direction)
+        summarySwitch(to: data.summary)
     } else {
       bgImageView.image = UIImage(named: data.weatherImageName)
       snowView.isHidden = !data.showWeatherEffects
@@ -175,4 +179,53 @@ class ViewController: UIViewController {
       label.transform = .identity
     })
   }
+
+    func planeDepart() {
+        let originalCenter = planeImage.center
+
+        UIView.animateKeyframes(withDuration: 1.5, delay: 0.0, options: [], animations: {
+            // add keyframes
+            UIView.addKeyframe(withRelativeStartTime: 0.0, relativeDuration: 0.25, animations: {
+                self.planeImage.center.x += 80
+                self.planeImage.center.y -= 10
+            })
+
+            UIView.addKeyframe(withRelativeStartTime: 0.1, relativeDuration: 0.4, animations: {
+                self.planeImage.transform = CGAffineTransform(rotationAngle: -.pi / 8)
+            })
+
+            UIView.addKeyframe(withRelativeStartTime: 0.25, relativeDuration: 0.25, animations: {
+                self.planeImage.center.x += 100
+                self.planeImage.center.y -= 50
+                self.planeImage.alpha = 0.0
+            })
+
+            UIView.addKeyframe(withRelativeStartTime: 0.51, relativeDuration: 0.01, animations: {
+                self.planeImage.transform = .identity
+                self.planeImage.center = CGPoint(x: 0.0, y: originalCenter.y)
+            })
+
+            UIView.addKeyframe(withRelativeStartTime: 0.55, relativeDuration: 0.45, animations: {
+                self.planeImage.alpha = 1.0
+                self.planeImage.center = originalCenter
+            })
+
+        }, completion: nil)
+    }
+
+    func summarySwitch(to: String) {
+        UIView.animateKeyframes(withDuration: 1.5, delay: 0.0, options: [], animations: {
+            UIView.addKeyframe(withRelativeStartTime: 0.0, relativeDuration: 0.5, animations: {
+                self.summary.center.y -= 80
+            })
+
+            UIView.addKeyframe(withRelativeStartTime: 0.5, relativeDuration: 0.5, animations: {
+                self.summary.center.y += 80
+            })
+        }, completion: nil)
+
+        delay(seconds: 0.75) {
+            self.summary.text = to
+        }
+    }
 }
